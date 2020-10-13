@@ -21,5 +21,5 @@ print('----CADASTRO DO CLIENTE------')
 print("O usuário se chama "+pessoa["nome"]+". Ele tem "+str(pessoa["idade"])+" anos.\n Ele mora na cidade de "+pessoa["cidade"]+"/"+pessoa["estado"])
 
 nomes_parentes = ["Rafael", "Carla", "Bernardo", "Carlos"]
-print("Os parentes da "+nome+" são: "+", ".join(nomes_parentes))
+print("Os parentes da "+ nome+" são: "+", ".join(nomes_parentes))
 print(pessoa["idade"])
