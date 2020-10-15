@@ -26,18 +26,20 @@ print(tabela[filtro2]['Reservas totais de petróleo (em milhões de barris)'].su
 
 # lista_nums = [1,3,5,9,13,345346345645, 3456]
 
-# def encontra_divisores(lista, divisor):
-#     nova_lista = []
-#     for numero in lista:
-#         if numero%divisor == 0:
-#             nova_lista.append(numero)
-#     return nova_lista
-    
+def encontra_divisores(lista, divisor):
+    nova_lista = []
+    for numero in lista:
+        if numero%divisor == 0:
+            nova_lista.append(numero)
+    return nova_lista
+
+encontra_divisores([1,2,3],2)
+
 # print(encontra_divisores(lista_nums,int(input('Qual é o divisor? '))))
 
 
 #lista_divisiveis[5] = 67
 
-# while numero<=100:
-#     lista.append(numero)
-#     numero = numero + 1
+while numero<=100:
+    lista.append(numero)
+    numero = numero + 1
