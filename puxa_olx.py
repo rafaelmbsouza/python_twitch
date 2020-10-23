@@ -1,16 +1,9 @@
 import requests as req
+from bs4 import BeautifulSoup
+import pandas as pd
+import time
 
-QUERY = 'iphone'
-url = 'https://www.olx.com.br/brasil?q=iphone&sf=1'
-
-# ESSA REQUISIÇÃO NÃO DEU CERTO (CóDIGO 403, forbidden), porque não estamos 
-# com os COOKIES e os HEADERS adequados para a autorização do site.
-
-# 1- ACESSAR A URL COM O NAVEGADOR (CHROME, FIREFOX)
-# 2 - APERTAR F12 E IR PARA A ABA NETWORK
-# 3 - RECARREGAR A PÁGINA
-# 4 - Botão direito sobre a primeira resuiqição get para COPIAR OS PARÂMETROS (Copy as cURL)
-# 5 - IMPORTAR ESSA REQUISIÇÃO NO SOFTWARE POSTMAN
+anuncios_df = pd.DataFrame()
 
 headers = {
 	'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:81.0) Gecko/20100101 Firefox/81.0',
@@ -23,12 +16,53 @@ headers = {
 	'Cache-Control': 'max-age=0'
 }
 
-r = req.get(url,headers=headers)
-print(r.status_code)
+QUERY = 'iphone'
 
-from bs4 import BeautifulSoup
 
-soup = BeautifulSoup(r.content, 'lxml')
-anuncios = soup.find('ul',{'id':'ad-list'})
+# ESSA REQUISIÇÃO NÃO DEU CERTO (CóDIGO 403, forbidden), porque não estamos 
+# com os COOKIES e os HEADERS adequados para a autorização do site.
 
-print(r.content)
+# 1- ACESSAR A URL COM O NAVEGADOR (CHROME, FIREFOX)
+# 2 - APERTAR F12 E IR PARA A ABA NETWORK
+# 3 - RECARREGAR A PÁGINA
+# 4 - Botão direito sobre a primeira resuiqição get para COPIAR OS PARÂMETROS (Copy as cURL)
+# 5 - IMPORTAR ESSA REQUISIÇÃO NO SOFTWARE POSTMAN
+
+MAX_PAGS = 50
+
+for pag_num in range(1,MAX_PAGS):
+	success = False
+	url = 'https://www.olx.com.br/brasil?q='+QUERY+'&sf=1&o='+str(pag_num)
+	
+	while not success: 
+		r = req.get(url,headers=headers)
+		print(r.status_code)
+		success = (r.status_code == 200)
+		time.sleep(2)
+
+
+	soup = BeautifulSoup(r.content, 'lxml')
+	anuncios = soup.find('ul',{'id':'ad-list'}).find_all('li')
+
+	for ad in anuncios:
+		dic = {}
+		try:
+			dic['url'] = ad.find('a')['href']
+			dic['title'] = ad.find('a')['title']
+			dic['valor'] = ad.find('p','eoKYee').text.strip()
+			dic['localizacao'] = ad.find('span','ciykCV')['title']
+			anuncios_df = anuncios_df.append(dic, ignore_index=True)
+			# print(title+': '+url)
+			# print(valor+' , '+localizacao)
+		except:
+			print('faiou')
+
+anuncios_df.to_csv('anuncios_iphone.csv')
+#print(anuncios[0].prettify())
+
+##TRY/EXCEPT
+
+# try:
+# 	EXPRESSÃO
+# except:
+# 	print('BUGOU')
